@@ -190,7 +190,7 @@ public:
                 case 99999:
                     break;
                 default:
-                    LOG_ERROR("server", "Smartstone: unhandled command! ID: %u, player GUID: %lu", action, player->GetGUID().GetRawValue());
+                    LOG_ERROR("server", "Smartstone: unhandled command! ID: {}, player GUID: %lu", action, player->GetGUID().GetRawValue());
                     break;
             }
             if (selectedCommand.charges > 0) {
@@ -225,7 +225,7 @@ public:
                 case 99999:
                     break;
                 default:
-                    LOG_ERROR("server", "Smartstone: unhandled command with code! ID: %u, player GUID: %lu", action, player->GetGUID().GetRawValue());
+                    LOG_ERROR("server", "Smartstone: unhandled command with code! ID: {}, player GUID: %lu", action, player->GetGUID().GetRawValue());
                     break;
             }
             if (selectedCommand.charges > 0) {
@@ -458,7 +458,7 @@ public:
     void OnLogin(Player *player) override {
         QueryResult ssCommandsResult = CharacterDatabase.Query(
                 "SELECT command, dateExpired, charges FROM "
-                "character_smartstone_commands WHERE playerGuid = %d ;",
+                "character_smartstone_commands WHERE playerGuid = {} ;",
                 player->GetGUID().GetCounter());
 
         if (ssCommandsResult) {

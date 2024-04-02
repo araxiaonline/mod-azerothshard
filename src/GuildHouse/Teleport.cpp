@@ -305,7 +305,7 @@ void nsNpcTel::LoadNpcTele()
         //      0        1        2        3                  4                   5
                "`pos_X`, `pos_Y`, `pos_Z`, `orientation`, `map`, `level`, `cost` "
         //      6        7        8        9              10     11       12
-        "FROM `%s` C, `%s` D, `%s` A "
+        "FROM {} C, {} D, {} A "
         "WHERE C.`id` = `cat_id` AND D.`id` = `dest_id` "
         "ORDER BY `namecat`, `cat_id`, `namedest`", Table[0], Table[1], Table[2]);
 

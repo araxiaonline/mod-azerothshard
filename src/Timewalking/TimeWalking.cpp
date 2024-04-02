@@ -70,10 +70,23 @@ public:
 
         //-------------------------------------------------------------------
         //Loading levels
-        QueryResult timewalkingLevel_table = CharacterDatabase.Query("SELECT level,race,class,"
-        "strength_pct,agility_pct,stamina_pct,intellect_pct,spirit_pct,"
-        "dodge_pct, parry_pct, block_pct, crit_pct, armor_pen_pct, health_pct, resistance_pct, power_cost_pct, stat_pct,"
-        "damage_pct,heal_pct FROM timewalking_levels ORDER BY level;");
+        QueryResult timewalkingLevel_table = CharacterDatabase.Query(R"(
+            SELECT
+                level,
+                race,
+                class,
+                strength_pct,
+                agility_pct,
+                stamina_pct,
+                intellect_pct,
+                spirit_pct,
+                damage_pct,
+                heal_pct
+            FROM
+                timewalking_levels
+            ORDER BY level;
+        )"
+        );
         if (!timewalkingLevel_table)
         {
             LOG_INFO("server.loading", ">> Loaded 0 levels for TimeWalking. DB table `timewalking_levels` is empty.\n");
@@ -91,18 +104,25 @@ public:
             _pctMap[TIMEWALKING_AURA_MOD_STA_PCT] = timeWalkingLevel_Field[5].Get<uint32>();
             _pctMap[TIMEWALKING_AURA_MOD_INT_PCT] = timeWalkingLevel_Field[6].Get<uint32>();
             _pctMap[TIMEWALKING_AURA_MOD_SPI_PCT] = timeWalkingLevel_Field[7].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_DODGE_PCT] = timeWalkingLevel_Field[8].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_PARRY_PCT] = timeWalkingLevel_Field[9].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_BLOCK_PCT] = timeWalkingLevel_Field[10].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_CRIT_PCT] = timeWalkingLevel_Field[11].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_ARMOR_PENET_PCT] = timeWalkingLevel_Field[12].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_INCREASE_HEALTH_PCT] = timeWalkingLevel_Field[13].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_RESISTANCE_PCT] = timeWalkingLevel_Field[14].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_POWER_COST_SCHOOL_PCT] = timeWalkingLevel_Field[15].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_STAT_PCT] = timeWalkingLevel_Field[16].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_DAMAGESPELL] = timeWalkingLevel_Field[17].Get<uint32>();
-            _pctMap[TIMEWALKING_AURA_MOD_HEALING] = timeWalkingLevel_Field[18].Get<uint32>();
-            timeWalkingLevelsStatsList[timeWalkingLevel_Field[0].Get<uint32>()*10000+timeWalkingLevel_Field[1].Get<uint32>()*100+timeWalkingLevel_Field[2].Get<uint32>()] = AzthLevelStat(timeWalkingLevel_Field[0].Get<uint32>(), timeWalkingLevel_Field[1].Get<uint32>(), timeWalkingLevel_Field[2].Get<uint32>(), _pctMap);
+            // _pctMap[TIMEWALKING_AURA_MOD_DODGE_PCT] = timeWalkingLevel_Field[8].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_PARRY_PCT] = timeWalkingLevel_Field[9].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_BLOCK_PCT] = timeWalkingLevel_Field[10].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_CRIT_PCT] = timeWalkingLevel_Field[11].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_ARMOR_PENET_PCT] = timeWalkingLevel_Field[12].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_INCREASE_HEALTH_PCT] = timeWalkingLevel_Field[13].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_RESISTANCE_PCT] = timeWalkingLevel_Field[14].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_POWER_COST_SCHOOL_PCT] = timeWalkingLevel_Field[15].Get<uint32>();
+            // _pctMap[TIMEWALKING_AURA_MOD_STAT_PCT] = timeWalkingLevel_Field[16].Get<uint32>();
+            _pctMap[TIMEWALKING_AURA_MOD_DAMAGESPELL] = timeWalkingLevel_Field[8].Get<uint32>();
+            _pctMap[TIMEWALKING_AURA_MOD_HEALING] = timeWalkingLevel_Field[9].Get<uint32>();
+            
+            timeWalkingLevelsStatsList[timeWalkingLevel_Field[0].Get<uint32>()*10000+timeWalkingLevel_Field[1].Get<uint32>()*100+timeWalkingLevel_Field[2].Get<uint32>()]
+                = AzthLevelStat(
+                    timeWalkingLevel_Field[0].Get<uint32>(),
+                    timeWalkingLevel_Field[1].Get<uint32>(),
+                    timeWalkingLevel_Field[2].Get<uint32>(),
+                    _pctMap
+                );
         }
         while (timewalkingLevel_table->NextRow());
 
@@ -110,7 +130,30 @@ public:
 
         //-------------------------------------------------------------------
         //Loading achievement
-        QueryResult azthAchievement_table = CharacterDatabase.Query("SELECT achievement,criteria,Points,category,parentCategory,difficulty,levelMax,levelMin,level,originalPoints,Name,Description,reward,rewardCount,killCredit,specialLevelReq,reqDimension FROM azth_achievements WHERE criteria != 0 ORDER BY achievement;");
+        QueryResult azthAchievement_table = CharacterDatabase.Query(R"(
+                SELECT
+                    achievement,
+                    criteria,
+                    Points,
+                    category,
+                    parentCategory,
+                    difficulty,
+                    levelMax,
+                    levelMin,
+                    level,
+                    originalPoints,
+                    Name,
+                    Description,
+                    reward,
+                    rewardCount
+                FROM
+                    azth_achievements
+                WHERE
+                    criteria != 0
+                ORDER BY
+                    achievement;
+            )"
+        );
         if (!azthAchievement_table)
         {
             LOG_INFO("server.loading", ">> Loaded 0 achievements for TimeWalking. DB table `azth_achievements` is empty.\n");
@@ -123,12 +166,35 @@ public:
             Field* azthAchievement_field = azthAchievement_table->Fetch();
 
             azthAchievementList[azthAchievement_field[1].Get<uint32>()] = AzthAchievement(
-                // achievement                                criteria                           Points                                 category                           parentCategory                    difficulty
-                azthAchievement_field[0].Get<uint32>(), azthAchievement_field[1].Get<uint32>(), azthAchievement_field[2].Get<uint32>(), azthAchievement_field[3].Get<uint32>(), azthAchievement_field[4].Get<uint32>(), azthAchievement_field[5].Get<uint32>(),
-                // levelMax                                 levelMin                                    level                              originalPoints                        Name                              Description
-                azthAchievement_field[6].Get<uint32>(), azthAchievement_field[7].Get<uint32>(), azthAchievement_field[8].Get<uint32>(), azthAchievement_field[9].Get<uint32>(), azthAchievement_field[10].Get<std::string>(), azthAchievement_field[11].Get<std::string>(),
+                // achievement
+                azthAchievement_field[0].Get<uint32>(),
+                // criteria
+                azthAchievement_field[1].Get<uint32>(),
+                // Points
+                azthAchievement_field[2].Get<uint32>(),
+                // category
+                azthAchievement_field[3].Get<uint32>(),
+                // parentCategory
+                azthAchievement_field[4].Get<uint32>(),
+                // difficulty
+                azthAchievement_field[5].Get<uint32>(),
+                // levelMax
+                azthAchievement_field[6].Get<uint32>(),
+                // levelMin
+                azthAchievement_field[7].Get<uint32>(),
+                // level
+                azthAchievement_field[8].Get<uint32>(),
+                // originalPoints
+                azthAchievement_field[9].Get<uint32>(),
+                // Name
+                azthAchievement_field[10].Get<std::string>(),
+                // Description
+                azthAchievement_field[11].Get<std::string>(),
                 //reward                                        rewardCount                             killcredit                      specialLevelReq                         reqDimension
-                azthAchievement_field[12].Get<uint32>(), azthAchievement_field[13].Get<uint32>(), azthAchievement_field[14].Get<uint32>(), azthAchievement_field[15].Get<uint32>(), azthAchievement_field[16].Get<uint32>());
+                azthAchievement_field[12].Get<uint32>(),
+                // rewardCount
+                azthAchievement_field[13].Get<uint32>()
+            );
         } while (azthAchievement_table->NextRow());
 
         sAzthAchievementMgr->achievementList = azthAchievementList;
@@ -576,7 +642,7 @@ public:
 
     void OnLoadFromDB(Player *player) override
     {
-        QueryResult timewalkingCharactersActive_table = CharacterDatabase.Query("SELECT `id`, `level` FROM `azth_timewalking_characters_active` WHERE `id`={}", player->GetGUID().GetCounter());
+        QueryResult timewalkingCharactersActive_table = CharacterDatabase.Query("SELECT `id`, `level` FROM `timewalking_characters_active` WHERE `id`={}", player->GetGUID().GetCounter());
         if (timewalkingCharactersActive_table) //if is in timewalking mode apply debuff
         {
             Field* timewalkingCharactersActive_field = timewalkingCharactersActive_table->Fetch();

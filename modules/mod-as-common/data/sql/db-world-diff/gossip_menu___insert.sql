@@ -1,1 +1,1 @@
-INSERT INTO `gossip_menu` (`entry`, `text_id`) VALUES('60000', '100010');
+REPLACE INTO `gossip_menu` (`MenuID`, `TextID`) VALUES('60000', '100010');

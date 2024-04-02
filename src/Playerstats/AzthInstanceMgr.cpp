@@ -1,5 +1,7 @@
 #include "AzthInstanceMgr.h"
 #include "Log.h"
+
+#define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED
 #include <boost/stacktrace.hpp>
 
 AzthInstanceMgr::AzthInstanceMgr(InstanceSave* is)

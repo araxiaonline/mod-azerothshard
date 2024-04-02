@@ -1132,7 +1132,8 @@ void HearthstoneMode::loadHearthstone()
     sHearthstoneMode->hsTwDailyQuests.clear();
     sHearthstoneMode->hsTwDailyRandomQuests.clear();
 
-        QueryResult hsQuestResult = CharacterDatabase.Query("SELECT `id`, `flag`, `specialLevel`, `reqDimension`, `groupLimit`, `startTime`, `endTime` FROM `hearthstone_quests`");
+        //QueryResult hsQuestResult = CharacterDatabase.Query("SELECT `id`, `flag`, `specialLevel`, `reqDimension`, `groupLimit`, `startTime`, `endTime` FROM `hearthstone_quests`");
+        QueryResult hsQuestResult = CharacterDatabase.Query("SELECT id, flag FROM hearthstone_quests");
 
         if (hsQuestResult)
         {
@@ -1141,11 +1142,11 @@ void HearthstoneMode::loadHearthstone()
                 HearthstoneQuest hq = {};
                 hq.id = (*hsQuestResult)[0].Get<uint32>();
                 hq.flag = (*hsQuestResult)[1].Get<uint32>();
-                hq.specialLevel = (*hsQuestResult)[2].Get<uint32>();
-                hq.reqDimension = (*hsQuestResult)[3].Get<uint32>();
-                hq.groupLimit = (*hsQuestResult)[4].Get<uint32>();
-                hq.startTime = (*hsQuestResult)[5].Get<uint32>();
-                hq.endTime = (*hsQuestResult)[6].Get<uint32>();
+                // hq.specialLevel = (*hsQuestResult)[2].Get<uint32>();
+                // hq.reqDimension = (*hsQuestResult)[3].Get<uint32>();
+                // hq.groupLimit = (*hsQuestResult)[4].Get<uint32>();
+                // hq.startTime = (*hsQuestResult)[5].Get<uint32>();
+                // hq.endTime = (*hsQuestResult)[6].Get<uint32>();
                 uint32 bitmask = hq.flag;
 
                 sHearthstoneMode->allQuests[hq.id]=hq;

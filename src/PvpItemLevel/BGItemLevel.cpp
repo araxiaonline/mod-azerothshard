@@ -32,6 +32,13 @@ public:
             return;
         }
 
+        if (!getLastDate)
+        {
+            LOG_INFO("server.loading", ">> Loaded 0 season. DB table `worldstates` is empty.");
+            LOG_INFO("server.loading", " ");
+            return;
+        }
+
         Field* arena_timestamp_table = getLastDate->Fetch();
 
         bool enable;

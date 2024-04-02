@@ -67,13 +67,13 @@ public:
         if (sAZTH->GetAZTHPlayer(player)->m_completed_achievement_map.find(achId) != sAZTH->GetAZTHPlayer(player)->m_completed_achievement_map.end()) {
             AzthPlayer::AzthAchiData it = sAZTH->GetAZTHPlayer(player)->m_completed_achievement_map[achId];
 
-            CharacterDatabase.AsyncQuery(Acore::StringFormat("INSERT INTO azth_achievement_stats (playerGuid, achievement, type, level, levelParty, specialLevel, date) VALUES (%u, %u, %u, %u, %u, %u, %u)",
+            CharacterDatabase.AsyncQuery(Acore::StringFormat(
+                "INSERT INTO azth_achievement_stats (playerGuid, achievement, type, level, levelParty, date) VALUES (%u, %u, %u, %u, %u, %u)",
                 player->GetGUID().GetCounter(),
                 achId,
                 ACHIEVEMENT_TYPE,
                 it.level,
                 it.levelParty,
-                it.specialLevel,
                 achiData.date
             ).c_str());
 
@@ -85,13 +85,13 @@ public:
         if (sAZTH->GetAZTHPlayer(player)->m_completed_criteria_map.find(critId) != sAZTH->GetAZTHPlayer(player)->m_completed_criteria_map.end()) {
             AzthPlayer::AzthAchiData it = sAZTH->GetAZTHPlayer(player)->m_completed_criteria_map[critId];
 
-            CharacterDatabase.AsyncQuery(Acore::StringFormat("INSERT INTO azth_achievement_stats (playerGuid, achievement, type, level, levelParty, specialLevel, date) VALUES (%u, %u, %u, %u, %u, %u, %u)",
+            CharacterDatabase.AsyncQuery(Acore::StringFormat(
+                "INSERT INTO azth_achievement_stats (playerGuid, achievement, type, level, levelParty, date) VALUES (%u, %u, %u, %u, %u, %u)",
                 player->GetGUID().GetCounter(),
                 critId,
                 CRITERIA_TYPE,
                 it.level,
                 it.levelParty,
-                it.specialLevel,
                 criteriaData.date
             ).c_str());
 
