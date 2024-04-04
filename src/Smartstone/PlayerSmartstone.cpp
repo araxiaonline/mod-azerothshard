@@ -25,7 +25,22 @@ void AzthPlayer::addSmartStoneCommand(SmartStonePlayerCommand command, bool quer
 
     if (query)
     {
-        CharacterDatabase.Execute("REPLACE INTO `character_smartstone_commands` (`playerGuid`, `command`, `dateExpired`, `charges`) VALUES ({}, {}, {}, {})", player->GetGUID().GetCounter(), command.id, sec, command.charges);
+        CharacterDatabase.Execute(R"(
+                REPLACE INTO 
+                    `character_smartstone_commands`
+                (
+                    `playerGuid`,
+                    `command`,
+                    `dateExpired`,
+                    `charges`
+                ) 
+                VALUES ({}, {}, {}, {})
+            )",
+            player->GetGUID().GetCounter(),
+            command.id,
+            sec,
+            command.charges
+        );
     }
 }
 
@@ -65,7 +80,16 @@ void AzthPlayer::removeSmartStoneCommand(SmartStonePlayerCommand command, bool q
 
     if (query)
     {
-        CharacterDatabase.Execute("DELETE FROM `character_smartstone_commands` WHERE `playerGuid`={} AND `command`={}", player->GetGUID().GetCounter(), command.id);
+        CharacterDatabase.Execute(R"(
+                DELETE FROM
+                    `character_smartstone_commands`
+                WHERE
+                    `playerGuid`={}
+                    AND `command`={}
+            )",
+            player->GetGUID().GetCounter(),
+            command.id
+        );
     }
 }
 
@@ -77,16 +101,33 @@ void AzthPlayer::decreaseSmartStoneCommandCharges(uint32 id) {
                     smartStoneCommands[i].charges < -1)
                 removeSmartStoneCommand(smartStoneCommands[i], true);
             else
-                CharacterDatabase.Execute("UPDATE `character_smartstone_commands` SET `charges`={} WHERE `playerGuid`={} AND `command`={}", smartStoneCommands[i].charges, player->GetGUID().GetCounter(), id);
+                CharacterDatabase.Execute(R"(
+                        UPDATE
+                            `character_smartstone_commands`
+                        SET
+                            `charges`={}
+                        WHERE
+                            `playerGuid`={}
+                            AND `command`={}
+                    )",
+                    smartStoneCommands[i].charges,
+                    player->GetGUID().GetCounter(),
+                    id
+                );
 
             return;
         }
     }
 }
 
-bool AzthPlayer::BuySmartStoneCommand(ObjectGuid vendorguid, uint32 vendorslot,
-        uint32 item, uint8 count, uint8 bag,
-        uint8 slot) {
+bool AzthPlayer::BuySmartStoneCommand(
+        ObjectGuid vendorguid,
+        uint32 vendorslot,
+        uint32 item,
+        uint8 count,
+        uint8 bag,
+        uint8 slot
+    ) {
 
     // cheating attempt
     if (count < 1)
@@ -190,11 +231,10 @@ bool AzthPlayer::BuySmartStoneCommand(ObjectGuid vendorguid, uint32 vendorslot,
     }
 
     if (crItem->ExtendedCost) {
-        ItemExtendedCostEntry const *iece =
-                sItemExtendedCostStore.LookupEntry(crItem->ExtendedCost);
+        ItemExtendedCostEntry const *iece = sItemExtendedCostStore.LookupEntry(crItem->ExtendedCost);
         if (!iece)
         {
-            LOG_ERROR("server", "Item %u have wrong ExtendedCost field value %u", pProto->ItemId, crItem->ExtendedCost);
+            LOG_ERROR("server", "Item {} have wrong ExtendedCost field value {}", pProto->ItemId, crItem->ExtendedCost);
             return false;
         }
 
@@ -230,14 +270,12 @@ bool AzthPlayer::BuySmartStoneCommand(ObjectGuid vendorguid, uint32 vendorslot,
     }
 
     uint32 price = 0;
-    if (crItem->IsGoldRequired(pProto) &&
-            pProto->BuyPrice >
-            0) // Assume price cannot be negative (do not know why it is int32)
+    if (crItem->IsGoldRequired(pProto) && pProto->BuyPrice > 0) // Assume price cannot be negative (do not know why it is int32)
     {
         uint32 maxCount = MAX_MONEY_AMOUNT / pProto->BuyPrice;
         if ((uint32) count > maxCount)
         {
-            LOG_ERROR("server", "Player %s tried to buy %u item id %u, causing overflow", player->GetName().c_str(), (uint32)count, pProto->ItemId);
+            LOG_ERROR("server", "Player {} tried to buy {} item id {}, causing overflow", player->GetName().c_str(), (uint32)count, pProto->ItemId);
             count = (uint8) maxCount;
         }
         price = pProto->BuyPrice * count; // it should not exceed MAX_MONEY_AMOUNT
@@ -334,7 +372,20 @@ void AzthPlayer::setLastPositionInfo(uint32 dimension, WorldLocation posInfo) {
 std::map<uint32,WorldLocation> AzthPlayer::getLastPositionInfoFromDB() {
     std::map<uint32,WorldLocation> lastPos;
 
-    QueryResult savedPosResult = CharacterDatabase.Query("SELECT `type`, `mapId`, `posX`, `posY`, `posZ` FROM `character_saved_position` WHERE `charGuid`={}", player->GetGUID().GetCounter());
+    QueryResult savedPosResult = CharacterDatabase.Query(R"(
+            SELECT
+                `type`,
+                `mapId`,
+                `posX`,
+                `posY`,
+                `posZ`
+            FROM
+                `character_saved_position`
+            WHERE
+                `charGuid`={}
+        )",
+        player->GetGUID().GetCounter()
+    );
 
     if (!savedPosResult)
         return lastPos;
@@ -344,7 +395,13 @@ std::map<uint32,WorldLocation> AzthPlayer::getLastPositionInfoFromDB() {
         Field* posFields = savedPosResult->Fetch();
 
         uint32 type = posFields[0].Get<uint32>();
-        lastPos[type] = WorldLocation(posFields[1].Get<float>(),posFields[2].Get<float>(),posFields[3].Get<float>(), posFields[4].Get<float>(), player->GetOrientation());
+        lastPos[type] = WorldLocation(
+            posFields[1].Get<float>(),
+            posFields[2].Get<float>(),
+            posFields[3].Get<float>(),
+            posFields[4].Get<float>(),
+            player->GetOrientation()
+        );
 
         sAZTH->GetAZTHPlayer(player)->setLastPositionInfo(type, lastPos[type]);
     } while (savedPosResult->NextRow());
@@ -360,7 +417,26 @@ void AzthPlayer::saveLastPositionInfoToDB(Player *pl)
     for ( it = lastPositionInfo.begin(); it != lastPositionInfo.end(); it++ )
     {
         WorldLocation _loc= it->second;
-        trans->Append("REPLACE INTO `character_saved_position` (`charGuid`, `type`, `posX`, `posY`, `posZ`, `mapId`) VALUES ({}, {}, {}, {}, {}, {});", pl->GetGUID().GetCounter(), it->first, _loc.GetPositionX(), _loc.GetPositionY(), _loc.GetPositionZ(), _loc.GetMapId());
+        trans->Append(R"(
+                REPLACE INTO 
+                    `character_saved_position`
+                (
+                    `charGuid`,
+                    `type`,
+                    `posX`,
+                    `posY`,
+                    `posZ`,
+                    `mapId`
+                ) 
+                VALUES ({}, {}, {}, {}, {}, {});
+            )",
+            pl->GetGUID().GetCounter(),
+            it->first,
+            _loc.GetPositionX(),
+            _loc.GetPositionY(),
+            _loc.GetPositionZ(),
+            _loc.GetMapId()
+        );
     }
 
     CharacterDatabase.CommitTransaction(trans);

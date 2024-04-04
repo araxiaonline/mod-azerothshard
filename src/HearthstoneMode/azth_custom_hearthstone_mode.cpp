@@ -1096,7 +1096,7 @@ void HearthstoneMode::loadHearthstone()
         } while (hsAchiResult->NextRow());
     }
 
-    LOG_INFO("server", "Hearthstone Mode: loaded %u achievement definitions", count);
+    LOG_INFO("server", "Hearthstone Mode: loaded {} achievement definitions", count);
 
     int itemCount = 0;
 
@@ -1119,7 +1119,7 @@ void HearthstoneMode::loadHearthstone()
         itemCount++;
     } while (result->NextRow());
 
-    LOG_INFO("server", "Hearthstone Mode: loaded %u transmog items", itemCount);
+    LOG_INFO("server", "Hearthstone Mode: loaded {} transmog items", itemCount);
 
     uint32 questCount = 0;
     sHearthstoneMode->hsPveQuests.clear();
@@ -1177,7 +1177,7 @@ void HearthstoneMode::loadHearthstone()
             } while (hsQuestResult->NextRow());
         }
 
-    LOG_INFO("server", "Hearthstone Mode: loaded %u quests", questCount);
+    LOG_INFO("server", "Hearthstone Mode: loaded {} quests", questCount);
 
 
     uint32 vendorCount = 0;
@@ -1203,7 +1203,7 @@ void HearthstoneMode::loadHearthstone()
         } while (hsVendorResult->NextRow());
     }
 
-    LOG_INFO("server", "Hearthstone Mode: loaded %u vendors", vendorCount);
+    LOG_INFO("server", "Hearthstone Mode: loaded {} vendors", vendorCount);
 }
 
 void AddSC_hearthstone()

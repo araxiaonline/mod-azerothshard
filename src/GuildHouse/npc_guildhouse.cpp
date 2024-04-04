@@ -970,8 +970,13 @@ class npc_buffnpc : public CreatureScript
 #define SPELL_VISUAL_TELEPORT   35517
 
 // Teleport Player
-void Teleport(Player *player, uint16 map,
-                float X, float Y, float Z, float orient)
+void Teleport(
+    Player *player,
+    uint16 map,
+    float X,
+    float Y, 
+    float Z,
+    float orient)
 {
     uint32 aurDim=sAZTH->GetAZTHPlayer(player)->getCurrentDimensionByAura();
     if (sAzthUtils->isPhasedDimension(aurDim) && !sAZTH->GetAZTHPlayer(player)->changeDimension(DIMENSION_NORMAL, true))

@@ -52,7 +52,25 @@ public:
     void OnStartup() override
     {
         //Loading timewalking instance
-        QueryResult timewalking_table = CharacterDatabase.Query("SELECT `id`, `name`, `exp`, `phase`, `level`, `bonus`, `criteria` FROM `timewalking` ORDER BY `exp`, `phase`, `level`, `name`");
+        QueryResult timewalking_table = CharacterDatabase.Query(R"(
+                SELECT
+                    `id`,
+                    `name`,
+                    `exp`,
+                    `phase`,
+                    `level`,
+                    `bonus`,
+                    `criteria`
+                FROM
+                    `timewalking`
+                ORDER BY
+                    `exp`,
+                    `phase`,
+                    `level`,
+                    `name`
+            )"
+        );
+
         if (!timewalking_table)
         {
             LOG_INFO("server.loading", ">> Loaded 0 raids for TimeWalking. DB table `timewalking` is empty.\n");
@@ -223,15 +241,16 @@ public:
         if (!sAZTH->GetAZTHPlayer(player)->isTimeWalking()) {
             if (player->getLevel()>=sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL)) {
                 //AddGossipItemFor(player,GOSSIP_ICON_TABARD, "Tutte le fasi", GOSSIP_SENDER_MAIN, 5);
-                AddGossipItemFor(player,GOSSIP_ICON_INTERACT_1, "Livello specifico", GOSSIP_SENDER_MAIN, 6, "Imposta un livello", 0, true);
+                AddGossipItemFor(player,GOSSIP_ICON_INTERACT_1, "Set a specific level", GOSSIP_SENDER_MAIN, 6, "Imposta un livello", 0, true);
                 if (player->IsGameMaster()) {
-                    AddGossipItemFor(player,GOSSIP_ICON_TRAINER, "Scaling automatico (beta)", GOSSIP_SENDER_MAIN, TIMEWALKING_LVL_AUTO+10000);
+                    AddGossipItemFor(player,GOSSIP_ICON_TRAINER, "Automatic Scaling (beta)", GOSSIP_SENDER_MAIN, TIMEWALKING_LVL_AUTO+10000);
                 }
                 AddGossipItemFor(player,GOSSIP_ICON_TABARD, "TimeWalking (Wotlk)", GOSSIP_SENDER_MAIN, 4);
             }
             AddGossipItemFor(player,0, "|TInterface/ICONS/INV_Misc_Coin_01:30|tFlex Mythic+ (Beta)", GOSSIP_SENDER_MAIN, 9); // we can't use another icon otherwise will be automatically selected on gossip hello
         } else {
-            AddGossipItemFor(player,0, "Esci dalla modalità TimeWalking", GOSSIP_SENDER_MAIN, 7);
+            // show the menu to get out of timewalking mode
+            AddGossipItemFor(player,0, "Leave TimeWalking", GOSSIP_SENDER_MAIN, 7);
         }
 
         SendGossipMenuFor(player,TIMEWALKING_GOSSIP_NPC_TEXT_MAIN, creature->GetGUID());

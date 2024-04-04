@@ -152,7 +152,7 @@ bool TELE::IsAllowedToTeleport(Player * const player) const
         return true;
     }
 
-    LOG_DEBUG("server", "Invalid flag (category: %u). Important problem...", GetCatID());
+    LOG_DEBUG("server", "Invalid flag (category: {}). Important problem...", GetCatID());
     return false;
 }
 
@@ -174,114 +174,114 @@ bool nsNpcTel::IsValidData(const uint32 &cat,   const Flag &flag,
     {
       case FLAG_TEAM:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (data0 < MAX_FLAG_TEAM)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (Team) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (Team) (category: {}).", cat);
         return false;
 
       case FLAG_GUILD:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (data0)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (GuildID) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (GuildID) (category: {}).", cat);
         return false;
 
       case FLAG_GMLEVEL:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (0 < data0 && data0 < 256)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (GmLevel) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (GmLevel) (category: {}).", cat);
         return false;
 
       case FLAG_ISGM:
         if (data0)
-            LOG_DEBUG("server", "Invalid data0 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data0 (category: {}).", cat);
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         return true;
 
       case FLAG_ACCOUNT:
        if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (data0)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (AccountID) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (AccountID) (category: {}).", cat);
         return false;
 
       case FLAG_LEVEL:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (0 < data0 && data0 < 256)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (Level) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (Level) (category: {}).", cat);
         return false;
 
       case FLAG_ITEM:
         if (!data0)
         {
-            LOG_DEBUG("server", "Invalid data0 (ItemID) (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data0 (ItemID) (category: {}).", cat);
             return false;
         }
         if (data1)
             return true;
-        LOG_DEBUG("server", "Invalid data1 (Item Count) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data1 (Item Count) (category: {}).", cat);
         return false;
 
       case FLAG_QUEST:
         if (!data0)
         {
-            LOG_DEBUG("server", "Invalid data0 (QuestID) (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data0 (QuestID) (category: {}).", cat);
             return false;
         }
         if (data1 < MAX_QUEST_STATUS + 1)
             return true;
-        LOG_DEBUG("server", "Invalid data1 (Quest Status) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data1 (Quest Status) (category: {]}).", cat);
         return false;
 
       case FLAG_GENDER:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (data0 < GENDER_NONE)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (Gender) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (Gender) (category: {}).", cat);
         return false;
 
       case FLAG_RACE:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (0 < data0 && data0 < MAX_RACES)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (Race) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (Race) (category: {}).", cat);
         return false;
 
       case FLAG_CLASS:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {]}).", cat);
         if (0 < data0 && data0 < MAX_CLASSES)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (Class) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (Class) (category: {}).", cat);
         return false;
 
       case FLAG_REPUTATION:
         if (!data0)
         {
-            LOG_DEBUG("server", "Invalid data0 (Faction/Reputation) (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data0 (Faction/Reputation) (category: {}).", cat);
             return false;
         }
         if (data1 <= REP_EXALTED)
             return true;
-        LOG_DEBUG("server", "Invalid data1 (Faction/Reputation) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data1 (Faction/Reputation) (category: {}).", cat);
         return false;
 
       case FLAG_PLAYER:
         if (data1)
-            LOG_DEBUG("server", "Invalid data1 (category: %u).", cat);
+            LOG_DEBUG("server", "Invalid data1 (category: {}).", cat);
         if (data0)
             return true;
-        LOG_DEBUG("server", "Invalid data0 (PlayerGuid) (category: %u).", cat);
+        LOG_DEBUG("server", "Invalid data0 (PlayerGuid) (category: {}).", cat);
         return false;
       default:
             return false;
@@ -293,27 +293,38 @@ bool nsNpcTel::IsValidData(const uint32 &cat,   const Flag &flag,
 
 void nsNpcTel::LoadNpcTele()
 {
-    const char *Table[] =
-    {
-        "custom_npc_tele_category",
-        "custom_npc_tele_destination",
-        "custom_npc_tele_association",
-    };
-
-    QueryResult result = WorldDatabase.Query(
-        "SELECT `flag`, `data0`, `data1`, `cat_id`, C.`name` `namecat`, D.`name` `namedest`, "
-        //      0        1        2        3                  4                   5
-               "`pos_X`, `pos_Y`, `pos_Z`, `orientation`, `map`, `level`, `cost` "
-        //      6        7        8        9              10     11       12
-        "FROM {} C, {} D, {} A "
-        "WHERE C.`id` = `cat_id` AND D.`id` = `dest_id` "
-        "ORDER BY `namecat`, `cat_id`, `namedest`", Table[0], Table[1], Table[2]);
+    QueryResult result = WorldDatabase.Query(R"(
+            SELECT 
+                `flag`,
+                `data0`,
+                `data1`,
+                `cat_id`,
+                C.`name` `namecat`,
+                D.`name` `namedest`,
+                `pos_X`,
+                `pos_Y`,
+                `pos_Z`,
+                `orientation`,
+                `map`,
+                `level`,
+                `cost`
+            FROM 
+                custom_npc_tele_category C,
+                custom_npc_tele_destination D,
+                custom_npc_tele_association A
+            WHERE 
+                C.`id` = `cat_id`
+                AND D.`id` = `dest_id`
+            ORDER BY `namecat`, `cat_id`, `namedest`
+        )"
+    );
 
     nsNpcTel::TabCatDest.clear();
 
     if (result)
     {
         //sLog->outString( "TSCR: Loading %s, %s and %s...", Table[0], Table[1], Table[2]);
+
 
         uint32 catid = 0;
         uint32 nbDest = 0;
@@ -348,7 +359,7 @@ void nsNpcTel::LoadNpcTele()
 
             nsNpcTel::Dest item =
             {
-                fields[5].Get<std::string>(),   // Name
+                fields[5].Get<std::string>(), // Name
                 fields[6].Get<float>(),       // X
                 fields[7].Get<float>(),       // Y
                 fields[8].Get<float>(),       // Z
@@ -362,10 +373,9 @@ void nsNpcTel::LoadNpcTele()
             ++nbDest;
         } while (result->NextRow());
 
-       // sLog->outString("");
-    //    sLog->outString("TSCR: >> Loaded %u npc_teleport.", nbDest);
-    }
-	//else sLog->outString("TSCR: WARNING >> Loaded 0 npc_teleport.");
+        LOG_INFO("server", "TSCR: >> Loaded {} npc_teleport.", nbDest);
+    } 
+    else LOG_INFO("server", "TSCR: WARNING >> Loaded 0 npc_teleport.");
 }
 
 #undef TELE

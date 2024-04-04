@@ -636,12 +636,32 @@ public:
         {
             std::ostringstream sWowarmory;
 
-            sWowarmory << "INSERT IGNORE INTO character_feed_log (guid,type,data,date,counter,difficulty,item_guid,item_quality) VALUES ";
+            sWowarmory << R"(
+                INSERT IGNORE INTO 
+                    character_feed_log
+                    (
+                        guid,
+                        type,
+                        data,
+                        date,
+                        counter,
+                        difficulty,
+                        item_guid,
+                        item_quality
+                    ) VALUES
+            )";
 
             for (WowarmoryFeeds::iterator iter = azthPlayer->m_wowarmory_feeds.begin(); iter < azthPlayer->m_wowarmory_feeds.end(); ++iter)
             {
-                //                      guid                    type                        data                    date                            counter                   difficulty                        item_guid                      item_quality
-                sWowarmory << "(" << (*iter).guid << ", " << (*iter).type << ", " << (*iter).data << ", " << uint64((*iter).date) << ", " << (*iter).counter << ", " << uint32((*iter).difficulty) << ", " << (*iter).item_guid << ", " << (*iter).item_quality << ")";
+                sWowarmory << "(" 
+                    << (*iter).guid << ", " 
+                    << (*iter).type << ", " 
+                    << (*iter).data << ", " 
+                    << uint64((*iter).date) << ", " 
+                    << (*iter).counter << ", " 
+                    << uint32((*iter).difficulty) << ", " 
+                    << (*iter).item_guid << ", " 
+                    << (*iter).item_quality << ")";
                 if (iter != azthPlayer->m_wowarmory_feeds.end() - 1)
                     sWowarmory << ",";
             }
@@ -652,7 +672,10 @@ public:
             azthPlayer->InitWowarmoryFeeds();
         }
 
-        wowArmoryTrans->Append("DELETE FROM `armory_character_stats` WHERE `guid`={}", player->GetGUID().GetCounter());
+        wowArmoryTrans->Append(
+            "DELETE FROM `armory_character_stats` WHERE `guid`={}",
+            player->GetGUID().GetCounter()
+        );
 
         // Character stats
         std::ostringstream ps;

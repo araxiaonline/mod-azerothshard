@@ -91,8 +91,7 @@ public:
     }
 
 
-    void OnGossipSelect(Player *player, Item *item, uint32  /*sender*/,
-            uint32 action) override {
+    void OnGossipSelect(Player *player, Item *item, uint32  /*sender*/, uint32 action) override {
 
         player->PlayerTalkClass->ClearMenus();
 
@@ -225,7 +224,7 @@ public:
                 case 99999:
                     break;
                 default:
-                    LOG_ERROR("server", "Smartstone: unhandled command with code! ID: {}, player GUID: %lu", action, player->GetGUID().GetRawValue());
+                    LOG_ERROR("server", "Smartstone: unhandled command with code! ID: {}, player GUID: {}", action, player->GetGUID().GetRawValue());
                     break;
             }
             if (selectedCommand.charges > 0) {
@@ -373,32 +372,44 @@ void SmartStone::loadCommands() {
     // sHearthstoneMode->hsAchievementTable.clear();
 
     // TODO: re-enable
-    // QueryResult ssCommandsResult = ExtraDatabase.PQuery(
-    //         "SELECT id, text_def, text_it, item, icon, parent_menu, type, action, charges, "
-    //         "duration FROM smartstone_commands");
+    QueryResult ssCommandsResult = CharacterDatabase.Query(
+        R"(
+            SELECT
+                id,
+                text,
+                item,
+                icon,
+                parent_menu,
+                type,
+                action,
+                charges,
+                duration
+            FROM smartstone_commands
+        )"
+    );
 
-    // if (ssCommandsResult) {
-    //     do {
-    //         SmartStoneCommand command = {};
-    //         command.id = (*ssCommandsResult)[0].GetUInt32();
-    //         command.text_def = (*ssCommandsResult)[1].GetString();
-    //         command.text_it = (*ssCommandsResult)[2].GetString();
-    //         command.item = (*ssCommandsResult)[3].GetUInt32();
-    //         command.icon = (*ssCommandsResult)[4].GetUInt32();
-    //         command.parent_menu = (*ssCommandsResult)[5].GetUInt32();
-    //         command.type = (*ssCommandsResult)[6].GetUInt32();
-    //         command.action = (*ssCommandsResult)[7].GetUInt32();
-    //         command.charges = (*ssCommandsResult)[8].GetInt32();
-    //         command.duration = (*ssCommandsResult)[9].GetUInt64();
+    if (ssCommandsResult) {
+        do {
+            SmartStoneCommand command = {};
+            command.id = (*ssCommandsResult)[0].Get<uint32>();
+            command.text_def = (*ssCommandsResult)[1].Get<std::string>();
+            command.text_it = (*ssCommandsResult)[1].Get<std::string>();
+            command.item = (*ssCommandsResult)[2].Get<uint32>();
+            command.icon = (*ssCommandsResult)[3].Get<uint32>();
+            command.parent_menu = (*ssCommandsResult)[4].Get<uint32>();
+            command.type = (*ssCommandsResult)[5].Get<uint32>();
+            command.action = (*ssCommandsResult)[6].Get<uint32>();
+            command.charges = (*ssCommandsResult)[7].Get<int32>();
+            command.duration = (*ssCommandsResult)[8].Get<uint64>();
 
-    //         ssCommands2.push_back(command);
+            ssCommands2.push_back(command);
 
-    //         count++;
+            count++;
 
-    //     } while (ssCommandsResult->NextRow());
-    // }
+        } while (ssCommandsResult->NextRow());
+    }
 
-    LOG_INFO("server", "Smartstone: loaded %u commands", count);
+    LOG_INFO("server", "Smartstone: loaded {} commands", count);
 }
 
 SmartStoneCommand SmartStone::getCommandById(uint32 id)
@@ -456,10 +467,18 @@ public:
     }
 
     void OnLogin(Player *player) override {
-        QueryResult ssCommandsResult = CharacterDatabase.Query(
-                "SELECT command, dateExpired, charges FROM "
-                "character_smartstone_commands WHERE playerGuid = {} ;",
-                player->GetGUID().GetCounter());
+        QueryResult ssCommandsResult = CharacterDatabase.Query(R"(
+                SELECT
+                    command,
+                    dateExpired,
+                    charges
+                FROM
+                    character_smartstone_commands
+                WHERE
+                    playerGuid = {};
+            )",
+            player->GetGUID().GetCounter()
+        );
 
         if (ssCommandsResult) {
             do {
@@ -513,8 +532,6 @@ public:
 void SmartStone::SmartStoneSendListInventory(WorldSession *session, uint64 vendorGuid) {
     VendorItemData const *items = sObjectMgr->GetNpcVendorItemList(SMARTSTONE_VENDOR_ENTRY);
 
-
-
     if (!items) {
         WorldPacket data(SMSG_LIST_INVENTORY, 8 + 1 + 1);
         data << vendorGuid;
@@ -535,8 +552,7 @@ void SmartStone::SmartStoneSendListInventory(WorldSession *session, uint64 vendo
 
     for (uint8 slot = 0; slot < itemCount; ++slot) {
         if (VendorItem const *item = items->GetItem(slot)) {
-            if (ItemTemplate const *itemTemplate =
-                    sObjectMgr->GetItemTemplate(item->item)) {
+            if (ItemTemplate const *itemTemplate = sObjectMgr->GetItemTemplate(item->item)) {
                 if (!(itemTemplate->AllowableClass &
                         session->GetPlayer()->getClassMask()) &&
                         itemTemplate->Bonding == BIND_WHEN_PICKED_UP &&
@@ -559,9 +575,13 @@ void SmartStone::SmartStoneSendListInventory(WorldSession *session, uint64 vendo
 
                 // we hide commands that the player already has
                 for (int i = 0; i < n; i++) {
-                    // sLog->outError("Smartstone: isnullcommand: %u, command: %u,
-                    // playercommand: %u", isNullCommand(command), command.id,
-                    // playerCommands[i]);
+                    LOG_ERROR(
+                        "server",
+                        "Smartstone: isnullcommand: {}, command: {}, playercommand: {}",
+                        std::to_string(isNullCommand(command)),
+                        command.id,
+                        playerCommands[i].id
+                    );
 
                     if (!isNullCommand(command) && command.id == playerCommands[i].id)
                         leftInStock = 0;
